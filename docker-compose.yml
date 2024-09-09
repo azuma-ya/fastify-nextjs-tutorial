@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
   fastify:
@@ -46,6 +46,8 @@ services:
     depends_on:
       - nextjs
       - fastify
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
 
 volumes:
   postgres_data:
