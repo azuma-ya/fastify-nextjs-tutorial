@@ -1,5 +1,7 @@
-import Image from "next/image";
+import { fw } from "@/lib/fetch";
 
-export default function Home() {
-  return <div>hello world</div>;
+export default async function Home() {
+  const { data } = await fw.get<{ message: string }>("/");
+
+  return <div>{data.message}</div>;
 }
