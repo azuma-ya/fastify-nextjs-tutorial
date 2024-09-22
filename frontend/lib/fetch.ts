@@ -52,8 +52,9 @@ function buildHeaders<T = HeadersInit>(headers?: T): HeadersInit {
 function buildCredentials(
   credentials?: Request["credentials"]
 ): Request["credentials"] | undefined {
-  // 全ての通信時に置いて同一オリジン及びクロスオリジン間通信を行う
-  // サーバー側がAccess-Control-Allow-Credentialsを返さないのでとりあえず、same-originで
+  if (process.env.NODE_ENV === "development") {
+    credentials = undefined;
+  }
   return credentials;
 }
 
@@ -93,11 +94,12 @@ async function http<T>(
   const request = new Request(
     // NEXT_PUBLIC_API_ROOTは必ず値が存在する想定なので `!` で型エラーを回避する
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    buildFullPath(process.env.NEXT_PUBLIC_API_URL!, path),
+    // Docker環境のため
+    typeof window === "undefined"
+      ? buildFullPath(process.env.NEXT_PUBLIC_API_URL!, path)
+      : `/api/${path}`,
     config
   );
-
-  console.log(request);
 
   const res: Response = await fetch(request);
 
